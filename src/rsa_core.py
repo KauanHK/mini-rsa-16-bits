@@ -1,7 +1,5 @@
 """Operações de cifração e decifração do Mini RSA."""
 
-from __future__ import annotations
-
 
 def fast_mod_exp(base: int, exp: int, mod: int) -> int:
     """Exponenciação modular rápida pelo método de quadração repetida.
@@ -23,7 +21,7 @@ def fast_mod_exp(base: int, exp: int, mod: int) -> int:
     result = 1
     base %= mod
     while exp > 0:
-        if exp & 1:          # bit menos significativo é 1
+        if exp & 1:  # bit menos significativo é 1
             result = result * base % mod
         base = base * base % mod
         exp >>= 1
@@ -51,9 +49,7 @@ def encrypt(message: int, e: int, n: int) -> int:
         2790
     """
     if message >= n:
-        raise ValueError(
-            f"Mensagem ({message}) deve ser menor que n ({n})."
-        )
+        raise ValueError(f"Mensagem ({message}) deve ser menor que n ({n}).")
     return fast_mod_exp(message, e, n)
 
 

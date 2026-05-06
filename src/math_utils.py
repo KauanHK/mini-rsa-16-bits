@@ -1,7 +1,5 @@
 """Funções matemáticas auxiliares para o Mini RSA."""
 
-from __future__ import annotations
-
 
 def gcd(a: int, b: int) -> int:
     """Calcula o MDC de dois inteiros pelo Algoritmo de Euclides.
@@ -65,9 +63,7 @@ def mod_inverse(e: int, phi: int) -> int:
     """
     g, x, _ = extended_gcd(e % phi, phi)
     if g != 1:
-        raise ValueError(
-            f"Inverso modular não existe: MDC({e}, {phi}) = {g} ≠ 1"
-        )
+        raise ValueError(f"Inverso modular não existe: MDC({e}, {phi}) = {g} ≠ 1")
     return x % phi
 
 

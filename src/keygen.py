@@ -1,7 +1,5 @@
 """Geração de chaves para o Mini RSA de 16 bits."""
 
-from __future__ import annotations
-
 import random
 
 from src.math_utils import gcd, is_prime, mod_inverse
@@ -107,7 +105,9 @@ def generate_keypair(verbose: bool = True) -> dict[str, int | tuple[int, int]]:
             continue
 
         if verbose:
-            _print_keygen_steps(p, q, n, phi, e, d)
+            from src.presenter import show_keygen_steps
+
+            show_keygen_steps(p, q, n, phi, e, d)
 
         return {
             "p": p,
@@ -121,29 +121,3 @@ def generate_keypair(verbose: bool = True) -> dict[str, int | tuple[int, int]]:
         }
 
     raise RuntimeError("Falha na geração de chaves após 1000 tentativas.")
-
-
-def _print_keygen_steps(
-    p: int, q: int, n: int, phi: int, e: int, d: int
-) -> None:
-    """Imprime o passo a passo matemático da geração de chaves."""
-    sep = "=" * 50
-    print(sep)
-    print("  GERAÇÃO DE CHAVES — Mini RSA 16 bits")
-    print(sep)
-    print(f"  Passo 1 │ Primos escolhidos")
-    print(f"          │   p = {p}")
-    print(f"          │   q = {q}")
-    print(f"  Passo 2 │ Módulo público")
-    print(f"          │   n = p × q = {p} × {q} = {n}")
-    print(f"          │   Bits de n: {n.bit_length()}  (deve ser ≤ 16)")
-    print(f"  Passo 3 │ Função totiente de Euler")
-    print(f"          │   φ(n) = (p-1)(q-1) = {p-1} × {q-1} = {phi}")
-    print(f"  Passo 4 │ Expoente público")
-    print(f"          │   e = {e}  [MDC(e, φ(n)) = 1 ✓]")
-    print(f"  Passo 5 │ Expoente privado  (Euclides Estendido)")
-    print(f"          │   d = e⁻¹ mod φ(n) = {e}⁻¹ mod {phi} = {d}")
-    print(f"          │   Verificação: (e × d) mod φ(n) = {(e * d) % phi} ✓")
-    print(f"  Chave pública  → (e={e}, n={n})")
-    print(f"  Chave privada  → (d={d}, n={n})")
-    print(sep)

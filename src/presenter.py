@@ -2,6 +2,7 @@
 
 import sys
 
+from src.use_cases.crack_key import CrackResult
 from src.use_cases.encrypt_number import EncryptNumberResult
 from src.use_cases.encrypt_text import EncryptTextResult
 
@@ -46,6 +47,42 @@ def show_text_result(result: EncryptTextResult) -> None:
     print(f"  Texto recuperado: {result.recovered!r}")
     print(f"  Resultado       : {'✓  SUCESSO' if result.success else '✗  FALHA'}")
     print(_SEP_THIN)
+
+
+def show_crack_result(result: CrackResult, d_real: int | None = None) -> None:
+    print(_SEP_THICK)
+    print("  QUEBRA DE CHAVE — Ataque por Fatoração Trivial")
+    print(_SEP_THICK)
+    print(f"  Chave pública recebida : (e={result.e}, n={result.n})")
+    print(f"  Bits de n              : {result.n.bit_length()}")
+    print(_SEP_THIN)
+
+    if result.error:
+        print(f"  [ERRO] {result.error}", file=sys.stderr)
+        print(_SEP_THICK)
+        return
+
+    print(f"  Passo 1 │ Fatoração de n por divisão tentativa")
+    print(f"          │   n = {result.p} × {result.q}  (testados divisores até √{result.n} ≈ {int(result.n**0.5)})")
+    print(f"  Passo 2 │ Recalcular φ(n)")
+    print(f"          │   φ(n) = ({result.p}-1)×({result.q}-1) = {result.phi}")
+    print(f"  Passo 3 │ Inverter e módulo φ(n)")
+    print(f"          │   d = {result.e}⁻¹ mod {result.phi} = {result.d_recovered}")
+
+    if d_real is not None:
+        match = "✓  IGUAL ao d original" if result.d_recovered == d_real else "✗  DIVERGE"
+        print(f"          │   Verificação com d real: {match}")
+
+    print(f"  Chave privada quebrada : (d={result.d_recovered}, n={result.n})")
+
+    if result.ciphertext:
+        print(_SEP_THIN)
+        print(f"  Texto cifrado          : {result.ciphertext}")
+        print(f"  Texto recuperado       : {result.plaintext_recovered!r}")
+
+    status = "✓  SUCESSO" if result.success else "✗  FALHA"
+    print(f"  Resultado              : {status}")
+    print(_SEP_THICK)
 
 
 def show_number_result(result: EncryptNumberResult) -> None:
